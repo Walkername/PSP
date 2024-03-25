@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:id="window" fx:controller="controller_pack.ControllerFir">
+    <VBox spacing="10">
+        <VBox>
+            <Text>Filter order:</Text>
+            <Text>Example: 3</Text>
+            <TextField fx:id="firOrder" />
+        </VBox>
+        <VBox>
+            <Text>X[ ]:</Text>
+            <Text>Example (numbers with space, fraction is dot): 0.5 1 0.5 1</Text>
+            <TextArea fx:id="firArrayX" prefRowCount="3" />
+        </VBox>
+        <VBox>
+            <Text>Coefficients B[ ]:</Text>
+            <Text>Example (numbers with space, fraction is dot): 0.42 0.75 0.6 0.2</Text>
+            <TextArea fx:id="firArrayB" prefRowCount="3" />
+        </VBox>
+        <VBox spacing="5">
+            <Text>Choose the location to create hex file:</Text>
+            <TextField fx:id="absolutePath"/>
+            <Button fx:id="locationChooser" onAction="#chooseLocation" text="Choose"/>
+        </VBox>
+        <HBox alignment="center">
+            <Button text="Generate" onAction="#generate"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
