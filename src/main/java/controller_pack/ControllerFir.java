@@ -172,7 +172,7 @@ public class ControllerFir {
             String stringArrayX = firArrayX.getText();
             String[] numbersX = stringArrayX.split(" ");
             for (String numberX: numbersX) {
-                writer.write(convertToHex(numberX, 32,25));
+                writer.write(convertToHex(numberX, 32,31));
                 writer.write("\n");
             }
             writer.flush();
