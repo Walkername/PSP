@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:id="window" fx:controller="controller_pack.ControllerFir">
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller_pack.ControllerFir">
     <VBox spacing="10">
         <VBox>
             <Text>Filter order:</Text>

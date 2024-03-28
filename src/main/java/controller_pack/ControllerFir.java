@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
@@ -16,9 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ControllerFir {
-
-    @FXML
-    private AnchorPane window;
 
     @FXML
     private Button locationChooser;
@@ -33,12 +29,8 @@ public class ControllerFir {
     private TextArea firArrayB;
 
     @FXML
-    private HBox firResult;
-
-    @FXML
     private void generate(ActionEvent event) {
         createHexFile(absolutePath.getText());
-        //getResult();
         System.out.println("You generated!");
     }
 
@@ -85,7 +77,6 @@ public class ControllerFir {
     }
 
     private String convertToHex(String number, int width, int fraction) {
-        System.out.println("Init = " + number);
 
         String parseNumber = String.valueOf(number);
         char sign = '+';
@@ -140,7 +131,6 @@ public class ControllerFir {
 
         // INTEGER AND FLOAT UNION
         StringBuilder binNumber = new StringBuilder(strIntPart.toString() + strFractionPart);
-        System.out.println("Bin = " + binNumber);
 
         // SIGN CONVERSION
         if (sign == '-') {
@@ -193,17 +183,5 @@ public class ControllerFir {
         catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-    }
-
-    @FXML
-    private void getResult() {
-        Text result = new Text(
-                "Filter Order = " + firOrder.getText() + "\n"
-                + "ArrayX: [" + firArrayX.getText() + "]\n"
-                + "ArrayB: [" + firArrayB.getText() + "]"
-        );
-        HBox containerResult = new HBox(result);
-        firResult.getChildren().clear();
-        firResult.getChildren().add(containerResult);
     }
 }
