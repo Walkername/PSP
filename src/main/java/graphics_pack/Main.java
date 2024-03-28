@@ -9,37 +9,30 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
-public class Graphics extends Application {
+public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("PSP Command Generator");
-            stage.setWidth(700);
-            stage.setHeight(500);
-            stage.setResizable(false);
+        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("PSP Command Generator");
+        stage.setWidth(700);
+        stage.setHeight(500);
+        stage.setResizable(false);
 
-            Image image = new Image("assets/IconPSP_prim.png");
-            stage.getIcons().add(image);
+        Image image = new Image("assets/IconPSP_prim.png");
+        stage.getIcons().add(image);
 
-            stage.show();
+        stage.show();
 
-            stage.setOnCloseRequest(event -> {
-                event.consume();
-                logout(stage);
-            });
-        } catch (RuntimeException e) {
-
-        }
-
-
-
+        stage.setOnCloseRequest(event -> {
+            event.consume();
+            logout(stage);
+        });
     }
 
     public void logout(Stage stage) {

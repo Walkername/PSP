@@ -9,7 +9,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -53,26 +52,73 @@ public class ControllerFir {
         }
     }
 
+    private String toTwosCompliment(String bin) {
+        StringBuilder twos = new StringBuilder();
+
+        // One's complement
+        for (int i = 0; i < bin.length(); i++) {
+            if (bin.charAt(i) == '1') {
+                twos.append('0');
+            }
+            else if (bin.charAt(i) == '0') {
+                twos.append('1');
+            }
+        }
+
+        // Two's complement
+        boolean addition = false;
+        for (int i = twos.length() - 1; i > 0; i--) {
+            if (twos.charAt(i) == '1') {
+                twos.setCharAt(i, '0');
+            }
+            else if (twos.charAt(i) == '0') {
+                twos.setCharAt(i, '1');
+                addition = true;
+                break;
+            }
+        }
+        if (!addition) {
+            twos.setCharAt(twos.length() - 1, '1');
+        }
+
+        return twos.toString();
+    }
+
     private String convertToHex(String number, int width, int fraction) {
-        StringBuilder hexNumber;
+        System.out.println("Init = " + number);
+
+        String parseNumber = String.valueOf(number);
+        char sign = '+';
+        if (parseNumber.charAt(0) == '-') {
+            sign = '-';
+            parseNumber = number.substring(1);
+        }
+
+        // Division in order to get intPart = 0
+        float floatNumber = Float.parseFloat(parseNumber);
+        while (floatNumber >= 1.0) {
+            floatNumber /= 10.0;
+        }
+
+        parseNumber = Float.toString(floatNumber);
 
         StringBuilder strIntPart = new StringBuilder();
         StringBuilder strFractionPart = new StringBuilder();
 
-        String[] intFraction = number.split("\\.");
+        String[] intFraction = parseNumber.split("\\.");
         int intPart = Integer.parseInt(intFraction[0]);
 
         if (intFraction.length == 2) {
             // FRACTION CONVERSION
-            float flNumber = Float.parseFloat("0." + number.split("\\.")[1]);
+            float floatPart = Float.parseFloat("0." + intFraction[1]);
 
             float remainder = 1f;
             while (remainder != 0.0f) {
-                flNumber *= 2.0f;
-                strFractionPart.append(String.valueOf(flNumber).split("\\.")[0]);
-                flNumber = Float.parseFloat("0." + String.valueOf(flNumber).split("\\.")[1]);
-                remainder = flNumber;
-                if (strFractionPart.length() >= 25) {
+                floatPart *= 2.0f;
+                strFractionPart.append(String.valueOf(floatPart).split("\\.")[0]);
+                floatPart = Float.parseFloat("0." + String.valueOf(floatPart).split("\\.")[1]);
+                remainder = floatPart;
+                if (strFractionPart.length() >= fraction) {
                     break;
                 }
             }
@@ -87,19 +133,32 @@ public class ControllerFir {
             intPart /= 2;
         }
 
-        restBits = width - fraction - strIntPart.length();
+        restBits = width - 1 - fraction - strIntPart.length(); // width - 1 because 32nd bit is sign
         for (int i = 0; i < restBits; i++) {
             strIntPart.insert(0, 0);
         }
 
-        hexNumber = new StringBuilder(strIntPart.toString() + strFractionPart);
+        // INTEGER AND FLOAT UNION
+        StringBuilder binNumber = new StringBuilder(strIntPart.toString() + strFractionPart);
+        System.out.println("Bin = " + binNumber);
 
-        String[] halfBytes = new String[8];
-        for (int i = 0, k = 0; i < hexNumber.length() && k < 8; i += 4, k++) {
-            halfBytes[k] = hexNumber.substring(i, i + 4);
+        // SIGN CONVERSION
+        if (sign == '-') {
+            String twosComplement = toTwosCompliment(binNumber.toString());
+            binNumber = new StringBuilder(twosComplement);
+            binNumber.insert(0, 1);
+        }
+        else {
+            binNumber.insert(0, 0);
         }
 
-        hexNumber = new StringBuilder();
+        // CONVERT TO HEX
+        String[] halfBytes = new String[8];
+        for (int i = 0, k = 0; i < binNumber.length() && k < 8; i += 4, k++) {
+            halfBytes[k] = binNumber.substring(i, i + 4);
+        }
+
+        StringBuilder hexNumber = new StringBuilder();
         for (String halfByte: halfBytes) {
             hexNumber.append(Integer.toHexString(Integer.parseInt(halfByte, 2)));
         }
@@ -126,7 +185,7 @@ public class ControllerFir {
             String stringArrayB = firArrayB.getText();
             String[] numbersB = stringArrayB.split(" ");
             for (String numberB: numbersB) {
-                writer.write(convertToHex(numberB, 32,25));
+                writer.write(convertToHex(numberB, 32,31));
                 writer.write("\n");
             }
             writer.flush();
@@ -138,9 +197,11 @@ public class ControllerFir {
 
     @FXML
     private void getResult() {
-        Text result = new Text("Filter Order = " + firOrder.getText() + "\n"
+        Text result = new Text(
+                "Filter Order = " + firOrder.getText() + "\n"
                 + "ArrayX: [" + firArrayX.getText() + "]\n"
-                + "ArrayB: [" + firArrayB.getText() + "]");
+                + "ArrayB: [" + firArrayB.getText() + "]"
+        );
         HBox containerResult = new HBox(result);
         firResult.getChildren().clear();
         firResult.getChildren().add(containerResult);

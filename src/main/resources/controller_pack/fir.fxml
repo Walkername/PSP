@@ -23,7 +23,7 @@
         </VBox>
         <VBox spacing="5">
             <Text>Choose the location to create hex file:</Text>
-            <TextField fx:id="absolutePath"/>
+            <TextField fx:id="absolutePath" />
             <Button fx:id="locationChooser" onAction="#chooseLocation" text="Choose"/>
         </VBox>
         <HBox alignment="center">
