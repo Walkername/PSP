@@ -1,98 +1,93 @@
 package controller_pack;
 
+import algorithm_pack.PspAlgorithm;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import java.sql.SQLOutput;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Controller {
+
+    private Queue<PspAlgorithm> algorithmQueue = new LinkedList<>();
+
     @FXML
     private VBox algorithmContent;
 
     @FXML
-    private Button firButton;
+    private ComboBox<String> algorithmList;
 
     @FXML
-    private Button iirButton;
+    private void clickAlgoList(ActionEvent event) throws Exception {
+        /*
+        String algorithm = algorithmList.getValue();
+        switch (algorithm) {
+            case "FIR-filter" -> setFirWindow();
+            case "IIR-filter" -> setIirWindow();
+            case "FFT" -> setFftWindow();
+            case "Noise filtration" -> setNoiseFiltration();
+            case "Modulators" -> setModulaWindow();
+        }
+
+         */
+    }
 
     @FXML
-    private Button fftButton;
+    private void addToWindow(ActionEvent event) {
+        String algorithm = algorithmList.getValue();
+        PspAlgorithm newAlgorithm = new PspAlgorithm(algorithm);
+        addToQueue(newAlgorithm);
+        algorithmContent.getChildren().add(newAlgorithm.getImageBlock());
+    }
+
+    private void addToQueue(PspAlgorithm algorithm) {
+        algorithmQueue.add(algorithm);
+    }
 
     @FXML
-    private Button noiseButton;
+    private void deleteFromWindow(ActionEvent event) {
+
+    }
+
+    private void deleteFromQueue(ActionEvent event) {
+
+    }
 
     @FXML
-    private Button modulaButton;
-
-    @FXML
-    private void clickFir(ActionEvent event) throws Exception {
-        firButton.setDisable(true);
-        iirButton.setDisable(false);
-        fftButton.setDisable(false);
-        noiseButton.setDisable(false);
-        modulaButton.setDisable(false);
-
+    private void setFirWindow() throws Exception {
         AnchorPane content = FXMLLoader.load(getClass().getResource("fir.fxml"));
         algorithmContent.getChildren().clear();
         algorithmContent.getChildren().add(content);
     }
 
-
-
     @FXML
-    private void clickIir(ActionEvent event) {
-        firButton.setDisable(false);
-        iirButton.setDisable(true);
-        fftButton.setDisable(false);
-        noiseButton.setDisable(false);
-        modulaButton.setDisable(false);
-
+    private void setIirWindow() {
         algorithmContent.getChildren().clear();
         Text text = new Text("Sorry, this algorithm is not finished yet!");
         algorithmContent.getChildren().add(text);
     }
 
     @FXML
-    private void clickFft(ActionEvent event) {
-        firButton.setDisable(false);
-        iirButton.setDisable(false);
-        fftButton.setDisable(true);
-        noiseButton.setDisable(false);
-        modulaButton.setDisable(false);
-
+    private void setFftWindow() {
         algorithmContent.getChildren().clear();
         Text text = new Text("Sorry, this algorithm is not finished yet!");
         algorithmContent.getChildren().add(text);
     }
 
     @FXML
-    private void clickNoise(ActionEvent event) {
-        firButton.setDisable(false);
-        iirButton.setDisable(false);
-        fftButton.setDisable(false);
-        noiseButton.setDisable(true);
-        modulaButton.setDisable(false);
-
+    private void setNoiseFiltration() {
         algorithmContent.getChildren().clear();
         Text text = new Text("Sorry, this algorithm is not finished yet!");
         algorithmContent.getChildren().add(text);
     }
 
     @FXML
-    private void clickModula(ActionEvent event) {
-        firButton.setDisable(false);
-        iirButton.setDisable(false);
-        fftButton.setDisable(false);
-        noiseButton.setDisable(false);
-        modulaButton.setDisable(true);
-
+    private void setModulaWindow() {
         algorithmContent.getChildren().clear();
         Text text = new Text("Sorry, this algorithm is not finished yet!");
         algorithmContent.getChildren().add(text);
