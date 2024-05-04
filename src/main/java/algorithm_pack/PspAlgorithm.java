@@ -18,9 +18,7 @@ public class PspAlgorithm {
         imageBlock.setMinSize(50.0, 50.0);
         imageBlock.setStyle("-fx-border-color: black;");
         imageBlock.setAlignment(Pos.CENTER);
-        //imageBlock.getChildren().add(textName);
-        Text textName1 = new Text("hi");
-        //imageBlock.getChildren().add(textName1);
+        imageBlock.getChildren().add(textName);
     }
 
     public VBox getImageBlock() {

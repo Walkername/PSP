@@ -2,7 +2,6 @@
 
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.collections.FXCollections?>
@@ -10,26 +9,35 @@
 <?import java.lang.String?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToggleButton?>
+
 <Group xmlns:fx="http://javafx.com/fxml" fx:controller="controller_pack.Controller">
-    <HBox spacing="20" style="-fx-padding: 10 10 10 10">
-        <VBox spacing="10">
-            <ComboBox fx:id="algorithmList" onAction="#clickAlgoList" promptText="Select Filter Type">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="FIR-filter" />
-                        <String fx:value="IIR-filter" />
-                        <String fx:value="FFT" />
-                        <String fx:value="Noise Filtration" />
-                        <String fx:value="Modulators" />
-                    </FXCollections>
-                </items>
-            </ComboBox>
-            <Button onAction="#addToWindow" text="Add to Queue"/>
-        </VBox>
-        <VBox fx:id="algorithmContent" spacing="15">
-            <!--
-            <Text>Choose the algorithm</Text>
-            -->
-        </VBox>
-    </HBox>
+    <VBox spacing="20" style="-fx-padding: 10 10 10 10;" prefWidth="680" prefHeight="480">
+        <HBox style="-fx-border-color: black;" alignment="CENTER">
+            <ToggleButton fx:id="modeChooser" onAction="#changeMode" text="Change to Test mode"/>
+        </HBox>
+
+        <HBox fx:id="mainWindow" spacing="20">
+            <VBox spacing="10" style="-fx-border-color: black; -fx-padding: 10 10 10 10;">
+                <ComboBox fx:id="algorithmList" onAction="#clickAlgoList" promptText="Select Filter Type">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="FIR-filter" />
+                            <String fx:value="IIR-filter" />
+                            <String fx:value="FFT" />
+                            <String fx:value="Noise Filtration" />
+                            <String fx:value="Modulators" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <Button onAction="#addToWindow" text="Add to Queue"/>
+            </VBox>
+            <VBox fx:id="algorithmContent" alignment="CENTER" spacing="15" fillWidth="false">
+                <!--
+                <Text>Choose the algorithm</Text>
+                -->
+            </VBox>
+        </HBox>
+
+    </VBox>
 </Group>
