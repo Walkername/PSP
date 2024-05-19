@@ -1,5 +1,7 @@
 package controller_pack;
 
+import algorithm_pack.FFT;
+import algorithm_pack.FIRFilter;
 import algorithm_pack.PspAlgorithm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,107 +38,110 @@ public class Controller {
     @FXML
     private void changeMode(ActionEvent event) {
         if (modeChooser.isSelected()) {
-            modeChooser.setText("Change to User mode");
-
-            VBox vbox = (VBox) mainWindow.getChildren().getFirst();
-            vbox.getChildren().clear();
-            algorithmContent.getChildren().clear();
-
-            Button firButton = new Button();
-            firButton.setText("FIR-filter");
-            firButton.setMaxWidth(Double.MAX_VALUE);
-            firButton.setOnAction(event1 -> {
-                try {
-                    setFirWindow();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            Button iirButton = new Button();
-            iirButton.setText("IIR-filter");
-            iirButton.setMaxWidth(Double.MAX_VALUE);
-
-            Button fftButton = new Button();
-            fftButton.setText("FFT");
-            fftButton.setMaxWidth(Double.MAX_VALUE);
-
-            Button noiseButton = new Button();
-            noiseButton.setText("Noise Filtration");
-            noiseButton.setMaxWidth(Double.MAX_VALUE);
-
-            Button modulaButton = new Button();
-            modulaButton.setText("Modulars");
-            modulaButton.setMaxWidth(Double.MAX_VALUE);
-
-            vbox.getChildren().addAll(firButton, iirButton, fftButton, noiseButton, modulaButton);
-            //mainWindow.getChildren().add(0, vbox);
+            changeToTestMode();
         } else {
-            modeChooser.setText("Change to Test mode");
-
-            VBox vbox = (VBox) mainWindow.getChildren().getFirst();
-            vbox.getChildren().clear();
-            algorithmContent.getChildren().clear();
-
-            ObservableList<String> algorithms = FXCollections.observableArrayList(
-                    "FIR-filter", "IIR-filter", "FFT", "Noise Filtration", "Modulators"
-            );
-            algorithmList = new ComboBox<>(algorithms);
-            algorithmList.setPromptText("Select Filter Type");
-
-            Button button = new Button();
-            button.setText("Add to Queue");
-            button.setOnAction(this::addToWindow);
-
-            vbox.getChildren().addAll(algorithmList, button);
+            changeToUserMode();
         }
     }
 
     @FXML
-    private void clickAlgoList(ActionEvent event) throws Exception {
-        /*
-        String algorithm = algorithmList.getValue();
-        switch (algorithm) {
-            case "FIR-filter" -> setFirWindow();
-            case "IIR-filter" -> setIirWindow();
-            case "FFT" -> setFftWindow();
-            case "Noise filtration" -> setNoiseFiltration();
-            case "Modulators" -> setModulaWindow();
-        }
+    private void changeToTestMode() {
+        modeChooser.setText("Change to User mode");
 
-         */
+        VBox vbox = (VBox) mainWindow.getChildren().getFirst();
+        vbox.getChildren().clear();
+        algorithmContent.getChildren().clear();
+
+        Button firButton = new Button();
+        firButton.setText("FIR-filter");
+        firButton.setMaxWidth(Double.MAX_VALUE);
+        firButton.setOnAction(event1 -> {
+            try {
+                setFirWindow();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Button iirButton = new Button();
+        iirButton.setText("IIR-filter");
+        iirButton.setMaxWidth(Double.MAX_VALUE);
+
+        Button fftButton = new Button();
+        fftButton.setText("FFT");
+        fftButton.setMaxWidth(Double.MAX_VALUE);
+
+        Button noiseButton = new Button();
+        noiseButton.setText("Noise Filtration");
+        noiseButton.setMaxWidth(Double.MAX_VALUE);
+
+        Button modulaButton = new Button();
+        modulaButton.setText("Modulars");
+        modulaButton.setMaxWidth(Double.MAX_VALUE);
+
+        vbox.getChildren().addAll(firButton, iirButton, fftButton, noiseButton, modulaButton);
+    }
+
+    @FXML
+    private void changeToUserMode() {
+        modeChooser.setText("Change to Test mode");
+
+        VBox vbox = (VBox) mainWindow.getChildren().getFirst();
+        vbox.getChildren().clear();
+        algorithmContent.getChildren().clear();
+
+        ObservableList<String> algorithms = FXCollections.observableArrayList(
+                "FIR-filter", "FFT"
+        );
+        algorithmList = new ComboBox<>(algorithms);
+        algorithmList.setPromptText("Select Filter Type");
+        algorithmList.setValue("FIR-filter");
+
+        Button button = new Button();
+        button.setText("Add to Queue");
+        button.setOnAction(this::addToWindow);
+
+        vbox.getChildren().addAll(algorithmList, button);
     }
 
     @FXML
     private void addToWindow(ActionEvent event) {
         String algorithm = algorithmList.getValue();
-        PspAlgorithm newAlgorithm = new PspAlgorithm(algorithm);
-        algorithmQueue.add(newAlgorithm);
-        algorithmContent.getChildren().add(newAlgorithm.getImageBlock());
-
-        newAlgorithm.getImageBlock().setOnMouseClicked(event1 -> {
-            if (newAlgorithm.getImageBlock().getChildren().size() == 1) {
-                HBox box = new HBox();
-
-                Button deleteButton = new Button();
-                deleteButton.setText("Delete");
-
-                Button closeButton = new Button();
-                closeButton.setText("X");
-                closeButton.setOnMouseClicked(event2 -> {
-                    newAlgorithm.getImageBlock().getChildren().remove(box);
-
-                });
-
-                deleteButton.setOnMouseClicked(event2 -> {
-                    algorithmContent.getChildren().remove(newAlgorithm.getImageBlock());
-                    algorithmQueue.remove(newAlgorithm);
-                });
-
-                box.getChildren().addAll(deleteButton, closeButton);
-                newAlgorithm.getImageBlock().getChildren().add(box);
+        if (algorithm != null) {
+            PspAlgorithm newAlgorithm;
+            switch (algorithm) {
+                case "FIR-filter" -> newAlgorithm = new FIRFilter();
+                case "FFT" -> newAlgorithm = new FFT();
+                default -> newAlgorithm = new FIRFilter();
             }
-        });
+
+            algorithmQueue.add(newAlgorithm);
+            algorithmContent.getChildren().add(newAlgorithm.getImageBlock());
+
+            newAlgorithm.getImageBlock().setOnMouseClicked(event1 -> {
+                if (newAlgorithm.getImageBlock().getChildren().size() == 1) {
+                    HBox box = new HBox();
+
+                    Button deleteButton = new Button();
+                    deleteButton.setText("Delete");
+
+                    Button closeButton = new Button();
+                    closeButton.setText("X");
+                    closeButton.setOnMouseClicked(event2 -> {
+                        newAlgorithm.getImageBlock().getChildren().remove(box);
+
+                    });
+
+                    deleteButton.setOnMouseClicked(event2 -> {
+                        algorithmContent.getChildren().remove(newAlgorithm.getImageBlock());
+                        algorithmQueue.remove(newAlgorithm);
+                    });
+
+                    box.getChildren().addAll(deleteButton, closeButton);
+                    newAlgorithm.getImageBlock().getChildren().add(box);
+                }
+            });
+        }
     }
 
     @FXML
