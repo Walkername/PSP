@@ -120,25 +120,32 @@ public class Controller {
 
             newAlgorithm.getImageBlock().setOnMouseClicked(event1 -> {
                 if (newAlgorithm.getImageBlock().getChildren().size() == 1) {
+                    VBox vbox = new VBox();
                     HBox box = new HBox();
+
+                    Button settingButton = new Button();
+                    settingButton.setText("Settings");
+                    settingButton.setOnMouseClicked(event2 -> {
+                        newAlgorithm.getStage().show();
+                    });
 
                     Button deleteButton = new Button();
                     deleteButton.setText("Delete");
-
-                    Button closeButton = new Button();
-                    closeButton.setText("X");
-                    closeButton.setOnMouseClicked(event2 -> {
-                        newAlgorithm.getImageBlock().getChildren().remove(box);
-
-                    });
-
                     deleteButton.setOnMouseClicked(event2 -> {
                         algorithmContent.getChildren().remove(newAlgorithm.getImageBlock());
                         algorithmQueue.remove(newAlgorithm);
                     });
 
+                    Button closeButton = new Button();
+                    closeButton.setText("X");
+                    closeButton.setOnMouseClicked(event2 -> {
+                        newAlgorithm.getImageBlock().getChildren().remove(vbox);
+
+                    });
+
                     box.getChildren().addAll(deleteButton, closeButton);
-                    newAlgorithm.getImageBlock().getChildren().add(box);
+                    vbox.getChildren().addAll(settingButton, box);
+                    newAlgorithm.getImageBlock().getChildren().add(vbox);
                 }
             });
         }

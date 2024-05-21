@@ -1,21 +1,15 @@
 package graphics_pack;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
 public class Main extends Application {
-
-    @FXML
-    private ComboBox<String> algorithmList;
 
     public static void main(String[] args) {
         launch(args);

@@ -3,6 +3,7 @@ package algorithm_pack;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.geometry.Pos;
+import javafx.stage.Stage;
 
 public abstract class PspAlgorithm {
 
@@ -10,16 +11,18 @@ public abstract class PspAlgorithm {
 
     private final VBox imageBlock;
 
+    private Stage stage;
+
     public PspAlgorithm(String name) {
         this.name = name;
 
         Text textName = new Text(name);
-        imageBlock = new VBox();
-        imageBlock.setMinSize(50.0, 50.0);
-        imageBlock.setStyle("-fx-border-color: black;");
-        imageBlock.setSpacing(5);
-        imageBlock.setAlignment(Pos.CENTER);
-        imageBlock.getChildren().add(textName);
+        this.imageBlock = new VBox();
+        this.imageBlock.setMinSize(50.0, 50.0);
+        this.imageBlock.setStyle("-fx-border-color: black;");
+        this.imageBlock.setSpacing(5);
+        this.imageBlock.setAlignment(Pos.CENTER);
+        this.imageBlock.getChildren().add(textName);
     }
 
     public String generateSTI(String data, int ram) {
@@ -40,5 +43,13 @@ public abstract class PspAlgorithm {
 
     public String getName() {
         return this.name;
+    }
+
+    public Stage getStage() {
+        return this.stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 }
