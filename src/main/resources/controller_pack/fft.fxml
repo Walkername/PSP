@@ -6,24 +6,36 @@
 <?import javafx.scene.text.Text?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller_pack.ControllerFFT">
     <VBox spacing="10" style="-fx-padding: 10 10 10 10;">
-        <VBox>
-            <Text>X[ ]:</Text>
-            <Text>Example (numbers with space, fraction is dot): 0.5 1 0.5 1</Text>
-            <TextArea fx:id="fftArrayRX" prefRowCount="3" />
-        </VBox>
-        <VBox>
-            <Text>X[ ]:</Text>
-            <Text>Example (numbers with space, fraction is dot): 0.5 1 0.5 1</Text>
-            <TextArea fx:id="fftArrayQX" prefRowCount="3" />
-        </VBox>
-        <VBox>
-            <Text>Coefficients B[ ]:</Text>
-            <Text>Example (numbers with space, fraction is dot): 0.42 0.75 0.6 0.2</Text>
-            <TextArea fx:id="fftArrayB" prefRowCount="3" />
-        </VBox>
+        <HBox spacing="10">
+            <VBox spacing="5">
+                <Text>Real part:</Text>
+                <TextField fx:id="fftArrayRX" prefColumnCount="25"/>
+                <Text>Imaginary part:</Text>
+                <TextField fx:id="fftArrayQX" prefColumnCount="25"/>
+                <Text>Coefficients B[ ]:</Text>
+                <TextField fx:id="fftArrayB" prefColumnCount="25"/>
+            </VBox>
+            <VBox spacing="5" fillWidth="false">
+                <Text>Address in memory:</Text>
+                <HBox spacing="2" alignment="CENTER">
+                    <TextField fx:id="fftArrayRXaddr" prefColumnCount="5" />
+                    <Text>0...2047</Text>
+                </HBox>
+                <Text>Address in memory:</Text>
+                <HBox spacing="2" alignment="CENTER">
+                    <TextField fx:id="fftArrayQXaddr" prefColumnCount="5" />
+                    <Text>0...2047</Text>
+                </HBox>
+                <Text>Address in memory:</Text>
+                <HBox spacing="2" alignment="CENTER">
+                    <TextField fx:id="fftArrayBaddr" prefColumnCount="5" />
+                    <Text>0...2047</Text>
+                </HBox>
+            </VBox>
+        </HBox>
         <VBox spacing="5">
             <Text>Choose the location to create hex file:</Text>
-            <TextField fx:id="absolutePath" />
+            <TextField fx:id="absolutePath"/>
             <Button fx:id="locationChooser" onAction="#chooseLocation" text="Choose"/>
         </VBox>
         <HBox alignment="center">

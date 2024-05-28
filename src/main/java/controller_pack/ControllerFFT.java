@@ -3,7 +3,6 @@ package controller_pack;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -25,11 +24,17 @@ public class ControllerFFT {
     private TextField absolutePath;
 
     @FXML
-    private TextArea fftArrayRX;
+    private TextField fftArrayRX;
     @FXML
-    private TextArea fftArrayQX;
+    private TextField fftArrayRXaddr;
     @FXML
-    private TextArea fftArrayB;
+    private TextField fftArrayQX;
+    @FXML
+    private TextField fftArrayQXaddr;
+    @FXML
+    private TextField fftArrayB;
+    @FXML
+    private TextField fftArrayBaddr;
 
     @FXML
     private void generate(ActionEvent event) {
@@ -48,15 +53,22 @@ public class ControllerFFT {
 
         StringBuilder programText = new StringBuilder();
 
+        // ADDRESSES
+        String ram0Addr = PSPUtils.convertToBinary(fftArrayRXaddr.getText(), 11);
+        String ram1Addr = PSPUtils.convertToBinary(fftArrayQXaddr.getText(), 11);
+        String ram2Addr = PSPUtils.convertToBinary(fftArrayBaddr.getText(), 11);
         // READ
-        String inAddr = PSPUtils.convertToBinary(String.valueOf(inDataAddr), 11);
-        String irp012 = generateLDI("00100", "01", inAddr);
+        String irp0 = generateLDI("00000", "01", ram0Addr);
+        String irp1 = generateLDI("00001", "01", ram1Addr);
+        String irp2 = generateLDI("00010", "01", ram2Addr);
         // WRITE RAM0 & RAM2
-        String iwp0 = generateLDI("00110", "01", inAddr);
-        String iwp1 = generateLDI("00111", "01", inAddr);
-        String iwc0 = generateLDI("01001", "01", inAddr);
+        String iwp0 = generateLDI("00110", "01", ram0Addr);
+        String iwp1 = generateLDI("00111", "01", ram1Addr);
+        String iwc0 = generateLDI("01001", "01", ram2Addr);
 
-        instructions.add(irp012);
+        instructions.add(irp0);
+        instructions.add(irp1);
+        instructions.add(irp2);
         instructions.add(iwp0);
         instructions.add(iwp1);
         instructions.add(iwc0);
@@ -92,7 +104,7 @@ public class ControllerFFT {
         // FFT
         String binOrder = PSPUtils.convertToBinary(order, 5);
         for (int i = 0; i < signalArrayRX.length; i++) {
-            String instructionFFT = generateFFT("1000", "1", "011");
+            String instructionFFT = generateFFT("1000", "1", "100");
             instructions.add(instructionFFT);
         }
 
