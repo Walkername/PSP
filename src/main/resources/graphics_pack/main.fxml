@@ -30,9 +30,9 @@
                 </ComboBox>
                 <Button onAction="#addToWindow" text="Add to Queue"/>
             </VBox>
-            <VBox>
+            <VBox spacing="5" alignment="CENTER">
                 <ScrollPane prefWidth="500" maxHeight="350">
-                    <VBox fx:id="algorithmContent" style="-fx-padding: 10 10 10 10;" prefWidth="300" alignment="CENTER" spacing="15" fillWidth="false">
+                    <VBox fx:id="algorithmContent" style="-fx-padding: 10 10 10 10;" prefWidth="480" alignment="CENTER" spacing="15" fillWidth="false">
                         <!--
                         <Text>Choose the algorithm</Text>
                         -->

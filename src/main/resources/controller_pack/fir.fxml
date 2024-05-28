@@ -4,8 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller_pack.ControllerFir">
-    <VBox spacing="10">
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller_pack.ControllerFIR">
+    <VBox spacing="10" style="-fx-padding: 10 10 10 10;">
         <VBox>
             <Text>Filter order:</Text>
             <Text>Example: 3</Text>

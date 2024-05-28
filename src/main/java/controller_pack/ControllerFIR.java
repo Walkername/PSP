@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ControllerFir {
+public class ControllerFIR {
 
     private final int inDataAddr = 0;
     private final int outDataAddr = 0;
@@ -50,10 +50,10 @@ public class ControllerFir {
 
         // READ
         String inAddr = PSPUtils.convertToBinary(String.valueOf(inDataAddr), 11);
-        String irp02 = generateLDI("00100", "01", inAddr);
+        String irp02 = generateLDI("00101", "01", inAddr);
         // WRITE RAM0 & RAM2
-        String iwp0 = generateLDI("00101", "01", inAddr);
-        String iwc0 = generateLDI("01000", "01", inAddr);
+        String iwp0 = generateLDI("00110", "01", inAddr);
+        String iwc0 = generateLDI("01001", "01", inAddr);
 
         instructions.add(irp02);
         instructions.add(iwp0);
@@ -66,7 +66,7 @@ public class ControllerFir {
         for (String value : signalArray) {
             String data = PSPUtils.convertToHex(value, 32, 31);
             String cutData = data.substring(0, 21);
-            String instructionSTI = generateSTI("0101", cutData);
+            String instructionSTI = generateSTI("0110", cutData);
             instructions.add(instructionSTI);
         }
 
@@ -74,33 +74,34 @@ public class ControllerFir {
         for (String value : coeffsArray) {
             String data = PSPUtils.convertToHex(value, 32, 31);
             String cutData = data.substring(0, 21);
-            String instructionSTI = generateSTI("1000", cutData);
+            String instructionSTI = generateSTI("1001", cutData);
             instructions.add(instructionSTI);
         }
 
         // FIR2
         int intOrder = Integer.parseInt(order);
 
-        for (int i = 0; i < intOrder; i++) {
-            String inModAddr = PSPUtils.convertToBinary(String.valueOf(inDataAddr) + i, 11);
+        for (int i = 1; i <= intOrder; i++) {
+            String inModAddr = PSPUtils.convertToBinary(String.valueOf(inDataAddr + i - 1), 11);
             String irp0LDI = generateLDI("00000", "01", inAddr);
             String irp2LDI = generateLDI("00010", "10", inModAddr);
 
             String binOrder = PSPUtils.convertToBinary(String.valueOf(i), 5);
-            String instructionFIR = generateFIR("0101", "1", binOrder, "100");
+            String instructionFIR = generateFIR("0110", "1", binOrder, "100");
 
             instructions.add(irp0LDI);
             instructions.add(irp2LDI);
             instructions.add(instructionFIR);
         }
 
-        for (int i = intOrder - 2; i >= 0; i--) {
-            String inModAddr = PSPUtils.convertToBinary(String.valueOf(inDataAddr) + i, 11);
-            String irp0LDI = generateLDI("00000", "01", inAddr);
-            String irp2LDI = generateLDI("00010", "10", inModAddr);
+        for (int i = intOrder - 1; i >= 1; i--) {
+            String inModAddrRam0 = PSPUtils.convertToBinary(String.valueOf(intOrder - 1), 11);
+            String inModAddrRam2 = PSPUtils.convertToBinary(String.valueOf(intOrder - i), 11);
+            String irp0LDI = generateLDI("00000", "10", inModAddrRam0);
+            String irp2LDI = generateLDI("00010", "01", inModAddrRam2);
 
             String binOrder = PSPUtils.convertToBinary(String.valueOf(i), 5);
-            String instructionFIR = generateFIR("0101", "1", binOrder, "100");
+            String instructionFIR = generateFIR("0110", "1", binOrder, "100");
 
             instructions.add(irp0LDI);
             instructions.add(irp2LDI);

@@ -8,14 +8,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -48,47 +50,61 @@ public class Controller {
     private void changeToTestMode() {
         modeChooser.setText("Change to User mode");
 
-        VBox vbox = (VBox) mainWindow.getChildren().getFirst();
-        vbox.getChildren().clear();
-        algorithmContent.getChildren().clear();
+        VBox vbox1 = (VBox) mainWindow.getChildren().getFirst();
+        vbox1.getChildren().clear();
+
+        VBox vbox2 = (VBox) mainWindow.getChildren().getLast();
+        vbox2.getChildren().clear();
+        //algorithmContent.getChildren().clear();
 
         Button firButton = new Button();
         firButton.setText("FIR-filter");
         firButton.setMaxWidth(Double.MAX_VALUE);
-        firButton.setOnAction(event1 -> {
+        firButton.setOnAction(event -> {
             try {
-                setFirWindow();
+                setFirWindow(vbox2);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
 
-        Button iirButton = new Button();
-        iirButton.setText("IIR-filter");
-        iirButton.setMaxWidth(Double.MAX_VALUE);
-
         Button fftButton = new Button();
         fftButton.setText("FFT");
         fftButton.setMaxWidth(Double.MAX_VALUE);
+        fftButton.setOnAction(event -> {
+            try {
+                setFftWindow(vbox2);
+            } catch (Exception e) {
+                throw new RuntimeException();
+            }
+        });
 
-        Button noiseButton = new Button();
-        noiseButton.setText("Noise Filtration");
-        noiseButton.setMaxWidth(Double.MAX_VALUE);
+        Button modulusButton = new Button();
+        modulusButton.setText("Modulus");
+        modulusButton.setMaxWidth(Double.MAX_VALUE);
+        modulusButton.setOnAction(event -> {
+            try {
+                setModulusWindow(vbox2);
+            } catch (Exception e) {
+                throw new RuntimeException();
+            }
+        });
 
-        Button modulaButton = new Button();
-        modulaButton.setText("Modulars");
-        modulaButton.setMaxWidth(Double.MAX_VALUE);
-
-        vbox.getChildren().addAll(firButton, iirButton, fftButton, noiseButton, modulaButton);
+        vbox1.getChildren().addAll(firButton, fftButton, modulusButton);
     }
 
     @FXML
     private void changeToUserMode() {
         modeChooser.setText("Change to Test mode");
 
-        VBox vbox = (VBox) mainWindow.getChildren().getFirst();
-        vbox.getChildren().clear();
-        algorithmContent.getChildren().clear();
+        VBox vbox1 = (VBox) mainWindow.getChildren().getFirst();
+        vbox1.getChildren().clear();
+
+        VBox drawingArea = algorithmContent;
+        drawingArea.getChildren().clear();
+
+        VBox vbox2 = (VBox) mainWindow.getChildren().getLast();
+        vbox2.getChildren().clear();
 
         ObservableList<String> algorithms = FXCollections.observableArrayList(
                 "FIR-filter", "FFT"
@@ -101,7 +117,21 @@ public class Controller {
         button.setText("Add to Queue");
         button.setOnAction(this::addToWindow);
 
-        vbox.getChildren().addAll(algorithmList, button);
+        drawingArea.setStyle("-fx-padding: 10 10 10 10");
+        drawingArea.setPrefWidth(300);
+        drawingArea.setAlignment(Pos.CENTER);
+        drawingArea.setSpacing(15);
+        drawingArea.setFillWidth(false);
+
+        ScrollPane scrollPane = new ScrollPane(drawingArea);
+        scrollPane.setPrefWidth(500);
+        scrollPane.setMaxHeight(300);
+
+        Button generateButton = new Button();
+        generateButton.setText("Generate");
+
+        vbox1.getChildren().addAll(algorithmList, button);
+        vbox2.getChildren().addAll(scrollPane, generateButton);
     }
 
     @FXML
@@ -112,6 +142,7 @@ public class Controller {
             switch (algorithm) {
                 case "FIR-filter" -> newAlgorithm = new FIRFilter();
                 case "FFT" -> newAlgorithm = new FFT();
+                //case "Modulus" -> newAlgorithm = new Modulus();
                 default -> newAlgorithm = new FIRFilter();
             }
 
@@ -125,9 +156,7 @@ public class Controller {
 
                     Button settingButton = new Button();
                     settingButton.setText("Settings");
-                    settingButton.setOnMouseClicked(event2 -> {
-                        newAlgorithm.getStage().show();
-                    });
+                    settingButton.setOnMouseClicked(event2 -> newAlgorithm.getStage().show());
 
                     Button deleteButton = new Button();
                     deleteButton.setText("Delete");
@@ -138,10 +167,7 @@ public class Controller {
 
                     Button closeButton = new Button();
                     closeButton.setText("X");
-                    closeButton.setOnMouseClicked(event2 -> {
-                        newAlgorithm.getImageBlock().getChildren().remove(vbox);
-
-                    });
+                    closeButton.setOnMouseClicked(event2 -> newAlgorithm.getImageBlock().getChildren().remove(vbox));
 
                     box.getChildren().addAll(deleteButton, closeButton);
                     vbox.getChildren().addAll(settingButton, box);
@@ -152,37 +178,33 @@ public class Controller {
     }
 
     @FXML
-    private void setFirWindow() throws Exception {
+    private void setFirWindow(VBox vbox) throws Exception {
         AnchorPane content = FXMLLoader.load(getClass().getResource("fir.fxml"));
-        algorithmContent.getChildren().clear();
-        algorithmContent.getChildren().add(content);
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setPrefWidth(520);
+        scrollPane.setMaxHeight(360);
+        vbox.getChildren().clear();
+        vbox.getChildren().add(scrollPane);
     }
 
     @FXML
-    private void setIirWindow() {
-        algorithmContent.getChildren().clear();
-        Text text = new Text("Sorry, this algorithm is not finished yet!");
-        algorithmContent.getChildren().add(text);
+    private void setFftWindow(VBox vbox) throws IOException {
+        AnchorPane content = FXMLLoader.load(getClass().getResource("fft.fxml"));
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setPrefWidth(520);
+        scrollPane.setMaxHeight(360);
+        vbox.getChildren().clear();
+        vbox.getChildren().add(scrollPane);
     }
 
     @FXML
-    private void setFftWindow() {
-        algorithmContent.getChildren().clear();
-        Text text = new Text("Sorry, this algorithm is not finished yet!");
-        algorithmContent.getChildren().add(text);
-    }
-
-    @FXML
-    private void setNoiseFiltration() {
-        algorithmContent.getChildren().clear();
-        Text text = new Text("Sorry, this algorithm is not finished yet!");
-        algorithmContent.getChildren().add(text);
-    }
-
-    @FXML
-    private void setModulaWindow() {
-        algorithmContent.getChildren().clear();
-        Text text = new Text("Sorry, this algorithm is not finished yet!");
-        algorithmContent.getChildren().add(text);
+    private void setModulusWindow(VBox vbox) throws IOException {
+        AnchorPane content = FXMLLoader.load(getClass().getResource("modulus.fxml"));
+        content.setStyle("-fx-padding: 10 10 10 10;");
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setPrefWidth(520);
+        scrollPane.setMaxHeight(360);
+        vbox.getChildren().clear();
+        vbox.getChildren().add(scrollPane);
     }
 }
