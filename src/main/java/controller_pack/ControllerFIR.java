@@ -3,7 +3,6 @@ package controller_pack;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -17,9 +16,6 @@ import java.util.List;
 
 public class ControllerFIR {
 
-    private final int inDataAddr = 0;
-    private final int outDataAddr = 0;
-
     @FXML
     private Button locationChooser;
     @FXML
@@ -28,9 +24,17 @@ public class ControllerFIR {
     @FXML
     private TextField firOrder;
     @FXML
-    private TextArea firArrayX;
+    private TextField firArrayRX;
     @FXML
-    private TextArea firArrayB;
+    private TextField firArrayRXaddr;
+    @FXML
+    private TextField firArrayQX;
+    @FXML
+    private TextField firArrayQXaddr;
+    @FXML
+    private TextField firArrayB;
+    @FXML
+    private TextField firArrayBaddr;
 
     @FXML
     private void generate(ActionEvent event) {
@@ -43,23 +47,28 @@ public class ControllerFIR {
         List<String> instructions = new ArrayList<>();
 
         String order = firOrder.getText();
-        String signal = firArrayX.getText();
+        String signalRX = firArrayRX.getText();
+        String signalQX = firArrayQX.getText();
         String coeffs = firArrayB.getText();
 
         StringBuilder programText = new StringBuilder();
 
         // READ
-        String inAddr = PSPUtils.convertToBinary(String.valueOf(inDataAddr), 11);
-        String irp02 = generateLDI("00101", "01", inAddr);
+        String ram0Addr = PSPUtils.convertToBinary(firArrayRXaddr.getText(), 11);
+        String ram1Addr = PSPUtils.convertToBinary(firArrayRXaddr.getText(), 11);
+        String ram2Addr = PSPUtils.convertToBinary(firArrayBaddr.getText(), 11);
+        String irp0 = generateLDI("00000", "01", ram0Addr);
+        String irp2 = generateLDI("00010", "01", ram2Addr);
         // WRITE RAM0 & RAM2
-        String iwp0 = generateLDI("00110", "01", inAddr);
-        String iwc0 = generateLDI("01001", "01", inAddr);
+        String iwp0 = generateLDI("00110", "01", ram0Addr);
+        String iwc0 = generateLDI("01001", "01", ram2Addr);
 
-        instructions.add(irp02);
+        instructions.add(irp0);
+        instructions.add(irp2);
         instructions.add(iwp0);
         instructions.add(iwc0);
 
-        String[] signalArray = signal.split(" ");
+        String[] signalArray = signalRX.split(" ");
         String[] coeffsArray = coeffs.split(" ");
 
         // WRITE TO RAM0
@@ -82,8 +91,8 @@ public class ControllerFIR {
         int intOrder = Integer.parseInt(order);
 
         for (int i = 1; i <= intOrder; i++) {
-            String inModAddr = PSPUtils.convertToBinary(String.valueOf(inDataAddr + i - 1), 11);
-            String irp0LDI = generateLDI("00000", "01", inAddr);
+            String inModAddr = PSPUtils.convertToBinary(String.valueOf(Integer.parseInt(ram2Addr) + i - 1), 11);
+            String irp0LDI = generateLDI("00000", "01", ram0Addr);
             String irp2LDI = generateLDI("00010", "10", inModAddr);
 
             String binOrder = PSPUtils.convertToBinary(String.valueOf(i), 5);

@@ -8,22 +8,38 @@
     <VBox spacing="10" style="-fx-padding: 10 10 10 10;">
         <VBox>
             <Text>Filter order:</Text>
-            <Text>Example: 3</Text>
-            <TextField fx:id="firOrder" />
+            <TextField fx:id="firOrder" prefColumnCount="5"/>
         </VBox>
-        <VBox>
-            <Text>X[ ]:</Text>
-            <Text>Example (numbers with space, fraction is dot): 0.5 1 0.5 1</Text>
-            <TextArea fx:id="firArrayX" prefRowCount="3" />
-        </VBox>
-        <VBox>
-            <Text>Coefficients B[ ]:</Text>
-            <Text>Example (numbers with space, fraction is dot): 0.42 0.75 0.6 0.2</Text>
-            <TextArea fx:id="firArrayB" prefRowCount="3" />
-        </VBox>
+        <HBox spacing="10">
+            <VBox spacing="5">
+                <Text>Real part:</Text>
+                <TextField fx:id="firArrayRX" prefColumnCount="25"/>
+                <Text>Imaginary part:</Text>
+                <TextField fx:id="firArrayQX" prefColumnCount="25"/>
+                <Text>Coefficients B[ ]:</Text>
+                <TextField fx:id="firArrayB" prefColumnCount="25"/>
+            </VBox>
+            <VBox spacing="5" fillWidth="false">
+                <Text>Address in memory:</Text>
+                <HBox spacing="2" alignment="CENTER">
+                    <TextField fx:id="firArrayRXaddr" prefColumnCount="5" promptText="0"/>
+                    <Text>0...2047</Text>
+                </HBox>
+                <Text>Address in memory:</Text>
+                <HBox spacing="2" alignment="CENTER">
+                    <TextField fx:id="firArrayQXaddr" prefColumnCount="5" promptText="0"/>
+                    <Text>0...2047</Text>
+                </HBox>
+                <Text>Address in memory:</Text>
+                <HBox spacing="2" alignment="CENTER">
+                    <TextField fx:id="firArrayBaddr" prefColumnCount="5" promptText="0"/>
+                    <Text>0...2047</Text>
+                </HBox>
+            </VBox>
+        </HBox>
         <VBox spacing="5">
             <Text>Choose the location to create hex file:</Text>
-            <TextField fx:id="absolutePath" />
+            <TextField fx:id="absolutePath"/>
             <Button fx:id="locationChooser" onAction="#chooseLocation" text="Choose"/>
         </VBox>
         <HBox alignment="center">

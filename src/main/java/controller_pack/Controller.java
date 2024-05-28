@@ -2,6 +2,7 @@ package controller_pack;
 
 import algorithm_pack.FFT;
 import algorithm_pack.FIRFilter;
+import algorithm_pack.Modulus;
 import algorithm_pack.PspAlgorithm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -142,7 +143,7 @@ public class Controller {
             switch (algorithm) {
                 case "FIR-filter" -> newAlgorithm = new FIRFilter();
                 case "FFT" -> newAlgorithm = new FFT();
-                //case "Modulus" -> newAlgorithm = new Modulus();
+                case "Modulus" -> newAlgorithm = new Modulus();
                 default -> newAlgorithm = new FIRFilter();
             }
 

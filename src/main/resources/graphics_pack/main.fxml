@@ -25,6 +25,7 @@
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="FIR-filter" />
                             <String fx:value="FFT" />
+                            <String fx:value="Modulus" />
                         </FXCollections>
                     </items>
                 </ComboBox>

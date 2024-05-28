@@ -6,16 +6,26 @@
 <?import javafx.scene.text.Text?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller_pack.ControllerModulus">
     <VBox spacing="10" style="-fx-padding: 10 10 10 10;">
-        <VBox>
-            <Text>Real part:</Text>
-            <Text>Example (numbers with space, fraction is dot): 0.5 1 0.5 1</Text>
-            <TextArea fx:id="realPart" prefRowCount="3" />
-        </VBox>
-        <VBox>
-            <Text>Imaginary part:</Text>
-            <Text>Example (numbers with space, fraction is dot): 0.42 0.75 0.6 0.2</Text>
-            <TextArea fx:id="imagPart" prefRowCount="3" />
-        </VBox>
+        <HBox spacing="10">
+            <VBox spacing="5">
+                <Text>Real part:</Text>
+                <TextField fx:id="realPart" prefColumnCount="25"/>
+                <Text>Imaginary part:</Text>
+                <TextField fx:id="imagPart" prefColumnCount="25"/>
+            </VBox>
+            <VBox spacing="5" fillWidth="false">
+                <Text>Address in memory:</Text>
+                <HBox spacing="2" alignment="CENTER">
+                    <TextField fx:id="realPartAddr" prefColumnCount="5" promptText="0"/>
+                    <Text>0...2047</Text>
+                </HBox>
+                <Text>Address in memory:</Text>
+                <HBox spacing="2" alignment="CENTER">
+                    <TextField fx:id="imagPartAddr" prefColumnCount="5" promptText="0"/>
+                    <Text>0...2047</Text>
+                </HBox>
+            </VBox>
+        </HBox>
         <VBox spacing="5">
             <Text>Choose the location to create hex file:</Text>
             <TextField fx:id="absolutePath" />

@@ -3,7 +3,6 @@ package controller_pack;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -16,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControllerModulus {
-    public final int inDataAddr = 0;
-    public final int outDataAddr = 0;
 
     @FXML
     private Button locationChooser;
@@ -25,9 +22,13 @@ public class ControllerModulus {
     private TextField absolutePath;
 
     @FXML
-    private TextArea realPart;
+    private TextField realPart;
     @FXML
-    private TextArea imagPart;
+    private TextField realPartAddr;
+    @FXML
+    private TextField imagPart;
+    @FXML
+    private TextField imagPartAddr;
 
     @FXML
     private void generate(ActionEvent event) {
@@ -45,15 +46,19 @@ public class ControllerModulus {
 
         StringBuilder programText = new StringBuilder();
 
+        // ADDRESSES
+        String ram0Addr = PSPUtils.convertToBinary(realPartAddr.getText(), 11);
+        String ram1Addr = PSPUtils.convertToBinary(imagPartAddr.getText(), 11);
         // READ
-        String inAddr = PSPUtils.convertToBinary(String.valueOf(inDataAddr), 11);
-        String irp01 = generateLDI("00011", "01", inAddr);
+        String irp0 = generateLDI("00000", "01", ram0Addr);
+        String irp1 = generateLDI("00001", "01", ram1Addr);
         // SETTING OF REGISTERS FOR WRITE RAM0 & RAM2
-        String iwp0 = generateLDI("00110", "01", inAddr);
-        String iwp1 = generateLDI("00111", "01", inAddr);
-        String iwc0 = generateLDI("01001", "01", inAddr);
+        String iwp0 = generateLDI("00110", "01", ram0Addr);
+        String iwp1 = generateLDI("00111", "01", ram0Addr);
+        String iwc0 = generateLDI("01001", "01", "0");
 
-        instructions.add(irp01);
+        instructions.add(irp0);
+        instructions.add(irp1);
         instructions.add(iwp0);
         instructions.add(iwp1);
         instructions.add(iwc0);

@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControllerFFT {
-    private final int inDataAddr = 0;
-    private final int outDataAddr = 0;
 
     @FXML
     private Button locationChooser;
