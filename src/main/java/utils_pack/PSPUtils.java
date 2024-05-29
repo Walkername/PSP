@@ -1,6 +1,27 @@
 package utils_pack;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class PSPUtils {
+
+    public static String[] readFile(String absolutePath) {
+        List<String> list = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(absolutePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                list.add(line);
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        String[] array = new String[list.size()];
+        list.toArray(array);
+        return array;
+    }
 
     public static String toTwosCompliment(String bin) {
         StringBuilder twos = new StringBuilder();

@@ -3,24 +3,18 @@ package algorithm_pack;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import utils_pack.PSPUtils;
 
 public class FIRFilter extends PspAlgorithm {
 
-    private List<String> signalArray;
-    private List<String> coeffsArray;
+    private String[] signalRXArray;
+    private String[] signalQXArray;
+    private String[] coeffsArray;
     private String order;
 
     public FIRFilter() {
@@ -36,11 +30,13 @@ public class FIRFilter extends PspAlgorithm {
         super.setStage(stage);
     }
 
-    public List<String> getSignalArray() {
-        return signalArray;
+    public String[] getSignalRXArray() {
+        return signalRXArray;
     }
 
-    public List<String> getCoeffsArray() {
+    public String[] getSignalQXArray() { return signalQXArray; }
+
+    public String[] getCoeffsArray() {
         return coeffsArray;
     }
 
@@ -49,61 +45,171 @@ public class FIRFilter extends PspAlgorithm {
     }
 
     private Parent generateInterface() {
-        AnchorPane anchorPane = new AnchorPane();
         VBox vbox = new VBox();
         vbox.setSpacing(10);
         vbox.setStyle("-fx-padding: 10 10 10 10;");
 
+        // FILTER ORDER
         VBox orderVBox = new VBox();
         Text titleFirOrder = new Text("Filter order:");
         Text exampleFirOrder = new Text("Example: 3");
         TextField valueFirOrder = new TextField();
         orderVBox.getChildren().addAll(titleFirOrder, exampleFirOrder, valueFirOrder);
 
-        VBox signalVBox = new VBox();
-        Text titleSignal = new Text("Signal Array:");
-        Text exampleSignal = new Text("Example (numbers with space, fraction is dot): 0.5 1 0.5 1");
-        TextArea valueSignal = new TextArea();
-        valueSignal.setPrefRowCount(3);
-        signalVBox.getChildren().addAll(titleSignal, exampleSignal, valueSignal);
+        // FILTER SIGNAL RX
+        VBox signalRXVBox = new VBox();
+        signalRXVBox.setSpacing(5);
+        ToggleGroup signalRXToggleGroup = new ToggleGroup();
 
-        VBox coeffsVBox = new VBox();
-        Text titleCoeffs = new Text("Coefficients Array:");
-        Text exampleCoeffs = new Text("Example (numbers with space, fraction is dot): 0.42 0.75 0.6 0.2");
-        TextArea valueCoeffs = new TextArea();
-        valueCoeffs.setPrefRowCount(3);
-        coeffsVBox.getChildren().addAll(titleCoeffs, exampleCoeffs, valueCoeffs);
+        VBox titleRXBox = new VBox();
+        Text titleSignalRX = new Text("Signal Array RX:");
+        Text exampleSignalRX = new Text("Example (numbers with space, fraction is dot): 0.5 1 0.5 1");
+        titleRXBox.getChildren().addAll(titleSignalRX, exampleSignalRX);
 
-        VBox outFileChooser = new VBox();
-        Text textFileChooser = new Text("Choose the location to create hex file:");
-        TextField valueFileChooser = new TextField();
-        Button locationChooser = new Button();
-        locationChooser.setText("Choose location");
-        locationChooser.setOnMouseClicked(event -> {
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            Stage stage = (Stage) locationChooser.getScene().getWindow();
-            File selectedDirectory = directoryChooser.showDialog(stage);
-            if (selectedDirectory != null) {
-                valueFileChooser.setText(selectedDirectory.getAbsolutePath());
-            }
+        TextField fieldSignalRX = new TextField();
+        TextField pathSignalRX = new TextField();
+        pathSignalRX.setDisable(true);
+        Button fileChooserSignalRX = new Button("...");
+        fileChooserSignalRX.setDisable(true);
+
+        RadioButton signalRXBtnText = new RadioButton("Type:");
+        signalRXBtnText.setToggleGroup(signalRXToggleGroup);
+        signalRXBtnText.fire();
+        signalRXBtnText.setOnAction(event -> {
+            fieldSignalRX.setDisable(false);
+            pathSignalRX.setDisable(true);
+            fileChooserSignalRX.setDisable(true);
         });
-        outFileChooser.getChildren().addAll(textFileChooser, valueFileChooser, locationChooser);
-        outFileChooser.setSpacing(5);
 
+        RadioButton signalRXBtnFile = new RadioButton("Use file:");
+        signalRXBtnFile.setToggleGroup(signalRXToggleGroup);
+        signalRXBtnFile.setOnAction(event -> {
+            fieldSignalRX.setDisable(true);
+            pathSignalRX.setDisable(false);
+            fileChooserSignalRX.setDisable(false);
+        });
+
+        HBox signalRXFileBox = new HBox();
+        signalRXFileBox.setSpacing(5);
+        signalRXFileBox.getChildren().addAll(signalRXBtnFile, pathSignalRX, fileChooserSignalRX);
+
+        signalRXVBox.getChildren().addAll(titleRXBox, signalRXBtnText, fieldSignalRX, signalRXFileBox);
+
+        // FILTER SIGNAL QX
+        VBox signalQXBox = new VBox();
+        signalQXBox.setSpacing(5);
+
+        ToggleGroup signalQXToggleGroup = new ToggleGroup();
+
+        VBox titleQXBox = new VBox();
+        Text titleSignalQX = new Text("Signal Array QX:");
+        titleQXBox.getChildren().addAll(titleSignalQX);
+
+        TextField fieldSignalQX = new TextField();
+        TextField pathSignalQX = new TextField();
+        pathSignalQX.setDisable(true);
+        Button fileChooserSignalQX = new Button("...");
+        fileChooserSignalQX.setDisable(true);
+
+        RadioButton signalQXBtnText = new RadioButton("Type:");
+        signalQXBtnText.setToggleGroup(signalQXToggleGroup);
+        signalQXBtnText.fire();
+        signalQXBtnText.setOnAction(event -> {
+            fieldSignalQX.setDisable(false);
+            pathSignalQX.setDisable(true);
+            fileChooserSignalQX.setDisable(true);
+        });
+
+        RadioButton signalQXBtnFile = new RadioButton("Use file:");
+        signalQXBtnFile.setToggleGroup(signalQXToggleGroup);
+        signalQXBtnFile.setOnAction(event -> {
+            fieldSignalQX.setDisable(true);
+            pathSignalQX.setDisable(false);
+            fileChooserSignalQX.setDisable(false);
+        });
+
+        HBox signalQXFileBox = new HBox();
+        signalQXFileBox.setSpacing(5);
+        signalQXFileBox.getChildren().addAll(signalQXBtnFile, pathSignalQX, fileChooserSignalQX);
+
+        signalRXVBox.getChildren().addAll(titleQXBox, signalQXBtnText, fieldSignalQX, signalQXFileBox);
+
+        // FILTER COEFFS
+        VBox coeffsVBox = new VBox();
+        coeffsVBox.setSpacing(5);
+
+        ToggleGroup coeffsToggleGroup = new ToggleGroup();
+
+        VBox titleCoeffsBox = new VBox();
+        Text titleCoeffs = new Text("Signal Array QX:");
+        titleCoeffsBox.getChildren().addAll(titleCoeffs);
+
+        TextField fieldCoeffs = new TextField();
+        TextField pathCoeffs = new TextField();
+        pathCoeffs.setDisable(true);
+        Button fileChooserCoeffs = new Button("...");
+        fileChooserCoeffs.setDisable(true);
+
+        RadioButton coeffsBtnText = new RadioButton("Type:");
+        coeffsBtnText.setToggleGroup(coeffsToggleGroup);
+        coeffsBtnText.fire();
+        coeffsBtnText.setOnAction(event -> {
+            fieldCoeffs.setDisable(false);
+            pathCoeffs.setDisable(true);
+            fileChooserCoeffs.setDisable(true);
+        });
+
+        RadioButton CoeffsBtnFile = new RadioButton("Use file:");
+        CoeffsBtnFile.setToggleGroup(coeffsToggleGroup);
+        CoeffsBtnFile.setOnAction(event -> {
+            fieldCoeffs.setDisable(true);
+            pathCoeffs.setDisable(false);
+            fileChooserCoeffs.setDisable(false);
+        });
+
+        HBox CoeffsFileBox = new HBox();
+        CoeffsFileBox.setSpacing(5);
+        CoeffsFileBox.getChildren().addAll(CoeffsBtnFile, pathCoeffs, fileChooserCoeffs);
+
+        signalRXVBox.getChildren().addAll(titleCoeffsBox, coeffsBtnText, fieldCoeffs, CoeffsFileBox);
+
+        // SAVE
         HBox generateHBox = new HBox();
         Button generateButton = new Button();
         generateButton.setText("Save");
         generateButton.setOnMouseClicked(event -> {
             this.order = valueFirOrder.getText();
-            this.signalArray = Arrays.asList(valueSignal.getText().split(" "));
-            this.coeffsArray = Arrays.asList(valueCoeffs.getText().split(" "));
+
+            RadioButton selectedRXButton = (RadioButton) signalRXToggleGroup.getSelectedToggle();
+            if (selectedRXButton.equals(signalRXBtnText)) {
+                this.signalRXArray = fieldSignalRX.getText().split(" ");
+            }
+            else {
+                this.signalRXArray = PSPUtils.readFile(pathSignalRX.getText());
+            }
+
+            RadioButton selectedQXButton = (RadioButton) signalQXToggleGroup.getSelectedToggle();
+            if (selectedQXButton.equals(signalQXBtnText)) {
+                this.signalQXArray = fieldSignalQX.getText().split(" ");
+            }
+            else {
+                this.signalQXArray = PSPUtils.readFile(pathSignalQX.getText());
+            }
+
+            RadioButton selectedCoeffsButton = (RadioButton) coeffsToggleGroup.getSelectedToggle();
+            if (selectedCoeffsButton.equals(coeffsBtnText)) {
+                this.coeffsArray = fieldCoeffs.getText().split(" ");
+            }
+            else {
+                this.coeffsArray = PSPUtils.readFile(pathCoeffs.getText());
+            }
+
             super.getStage().close();
         });
         generateHBox.getChildren().add(generateButton);
         generateHBox.setAlignment(Pos.CENTER);
 
-        vbox.getChildren().addAll(orderVBox, signalVBox, coeffsVBox, outFileChooser, generateHBox);
-        //anchorPane.getChildren().add(vbox);
+        vbox.getChildren().addAll(orderVBox, signalRXVBox, signalQXBox, coeffsVBox, generateHBox);
 
         return vbox;
     }

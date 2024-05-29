@@ -12,10 +12,11 @@
 <?import javafx.scene.control.ToggleButton?>
 
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <Group xmlns:fx="http://javafx.com/fxml" fx:controller="controller_pack.Controller">
     <VBox spacing="20" style="-fx-padding: 10 10 10 10;" prefWidth="680" prefHeight="480">
-        <HBox style="-fx-border-color: black;" alignment="CENTER">
-            <ToggleButton fx:id="modeChooser" onAction="#changeMode" text="Change to Test mode"/>
+        <HBox style="-fx-border-color: black;" alignment="CENTER" >
+            <ToggleButton fx:id="modeChooser" onAction="#changeMode" text="Change to Test mode" />
         </HBox>
 
         <HBox fx:id="mainWindow" spacing="20">
@@ -32,15 +33,19 @@
                 <Button onAction="#addToWindow" text="Add to Queue"/>
             </VBox>
             <VBox spacing="5" alignment="CENTER">
-                <ScrollPane prefWidth="500" maxHeight="350">
-                    <VBox fx:id="algorithmContent" style="-fx-padding: 10 10 10 10;" prefWidth="480" alignment="CENTER" spacing="15" fillWidth="false">
+                <ScrollPane prefWidth="500" maxHeight="330">
+                    <VBox fx:id="algorithmContent" style="-fx-padding: 10 10 10 10;" prefWidth="480" alignment="CENTER" spacing="15">
                         <!--
                         <Text>Choose the algorithm</Text>
                         -->
 
                     </VBox>
                 </ScrollPane>
-                <Button text="Generate"/>
+                <HBox spacing="5">
+                    <TextField fx:id="absolutePath"/>
+                    <Button fx:id="locationChooser" onAction="#chooseLocation" text="..."/>
+                </HBox>
+                <Button text="Generate" onAction="#generate" />
             </VBox>
 
         </HBox>

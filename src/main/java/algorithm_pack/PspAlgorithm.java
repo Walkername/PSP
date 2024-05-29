@@ -19,6 +19,7 @@ public abstract class PspAlgorithm {
         Text textName = new Text(name);
         this.imageBlock = new VBox();
         this.imageBlock.setMinSize(50.0, 50.0);
+        this.imageBlock.setMaxSize(50.0, 50.0);
         this.imageBlock.setStyle("-fx-border-color: black;");
         this.imageBlock.setSpacing(5);
         this.imageBlock.setAlignment(Pos.CENTER);
