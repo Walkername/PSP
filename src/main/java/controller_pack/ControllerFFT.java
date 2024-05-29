@@ -9,8 +9,6 @@ import javafx.stage.Stage;
 import utils_pack.PSPUtils;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +35,7 @@ public class ControllerFFT {
     @FXML
     private void generate(ActionEvent event) {
         String programText = generateProgram();
-        createHexFile(programText, absolutePath.getText());
+        PSPUtils.createHexFile(programText, absolutePath.getText());
         System.out.println("You generated!");
     }
 
@@ -144,17 +142,6 @@ public class ControllerFFT {
         File selectedDirectory = directoryChooser.showDialog(stage);
         if (selectedDirectory != null) {
             absolutePath.setText(selectedDirectory.getAbsolutePath());
-        }
-    }
-
-    @FXML
-    private void createHexFile(String program, String absolutePath) {
-        try (FileWriter writer = new FileWriter(absolutePath + "\\program.txt", false)) {
-            writer.write(program);
-            writer.flush();
-        }
-        catch (IOException ex) {
-            System.out.println(ex.getMessage());
         }
     }
 }

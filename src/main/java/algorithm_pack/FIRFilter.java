@@ -7,8 +7,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import utils_pack.PSPUtils;
+
+import java.io.File;
 
 public class FIRFilter extends PspAlgorithm {
 
@@ -57,12 +60,12 @@ public class FIRFilter extends PspAlgorithm {
         orderVBox.getChildren().addAll(titleFirOrder, exampleFirOrder, valueFirOrder);
 
         // FILTER SIGNAL RX
-        VBox signalRXVBox = new VBox();
-        signalRXVBox.setSpacing(5);
+        VBox signalRXBox = new VBox();
+        signalRXBox.setSpacing(5);
         ToggleGroup signalRXToggleGroup = new ToggleGroup();
 
         VBox titleRXBox = new VBox();
-        Text titleSignalRX = new Text("Signal Array RX:");
+        Text titleSignalRX = new Text("Signal Real Part:");
         Text exampleSignalRX = new Text("Example (numbers with space, fraction is dot): 0.5 1 0.5 1");
         titleRXBox.getChildren().addAll(titleSignalRX, exampleSignalRX);
 
@@ -71,6 +74,14 @@ public class FIRFilter extends PspAlgorithm {
         pathSignalRX.setDisable(true);
         Button fileChooserSignalRX = new Button("...");
         fileChooserSignalRX.setDisable(true);
+        fileChooserSignalRX.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            Stage stage = (Stage) fileChooserSignalRX.getScene().getWindow();
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                pathSignalRX.setText(selectedFile.getAbsolutePath());
+            }
+        });
 
         RadioButton signalRXBtnText = new RadioButton("Type:");
         signalRXBtnText.setToggleGroup(signalRXToggleGroup);
@@ -93,7 +104,7 @@ public class FIRFilter extends PspAlgorithm {
         signalRXFileBox.setSpacing(5);
         signalRXFileBox.getChildren().addAll(signalRXBtnFile, pathSignalRX, fileChooserSignalRX);
 
-        signalRXVBox.getChildren().addAll(titleRXBox, signalRXBtnText, fieldSignalRX, signalRXFileBox);
+        signalRXBox.getChildren().addAll(titleRXBox, signalRXBtnText, fieldSignalRX, signalRXFileBox);
 
         // FILTER SIGNAL QX
         VBox signalQXBox = new VBox();
@@ -102,7 +113,7 @@ public class FIRFilter extends PspAlgorithm {
         ToggleGroup signalQXToggleGroup = new ToggleGroup();
 
         VBox titleQXBox = new VBox();
-        Text titleSignalQX = new Text("Signal Array QX:");
+        Text titleSignalQX = new Text("Signal Imaginary Part:");
         titleQXBox.getChildren().addAll(titleSignalQX);
 
         TextField fieldSignalQX = new TextField();
@@ -110,6 +121,14 @@ public class FIRFilter extends PspAlgorithm {
         pathSignalQX.setDisable(true);
         Button fileChooserSignalQX = new Button("...");
         fileChooserSignalQX.setDisable(true);
+        fileChooserSignalQX.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            Stage stage = (Stage) fileChooserSignalQX.getScene().getWindow();
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                pathSignalQX.setText(selectedFile.getAbsolutePath());
+            }
+        });
 
         RadioButton signalQXBtnText = new RadioButton("Type:");
         signalQXBtnText.setToggleGroup(signalQXToggleGroup);
@@ -132,16 +151,16 @@ public class FIRFilter extends PspAlgorithm {
         signalQXFileBox.setSpacing(5);
         signalQXFileBox.getChildren().addAll(signalQXBtnFile, pathSignalQX, fileChooserSignalQX);
 
-        signalRXVBox.getChildren().addAll(titleQXBox, signalQXBtnText, fieldSignalQX, signalQXFileBox);
+        signalQXBox.getChildren().addAll(titleQXBox, signalQXBtnText, fieldSignalQX, signalQXFileBox);
 
         // FILTER COEFFS
-        VBox coeffsVBox = new VBox();
-        coeffsVBox.setSpacing(5);
+        VBox coeffsBox = new VBox();
+        coeffsBox.setSpacing(5);
 
         ToggleGroup coeffsToggleGroup = new ToggleGroup();
 
         VBox titleCoeffsBox = new VBox();
-        Text titleCoeffs = new Text("Signal Array QX:");
+        Text titleCoeffs = new Text("Coefficients:");
         titleCoeffsBox.getChildren().addAll(titleCoeffs);
 
         TextField fieldCoeffs = new TextField();
@@ -149,6 +168,14 @@ public class FIRFilter extends PspAlgorithm {
         pathCoeffs.setDisable(true);
         Button fileChooserCoeffs = new Button("...");
         fileChooserCoeffs.setDisable(true);
+        fileChooserCoeffs.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            Stage stage = (Stage) fileChooserCoeffs.getScene().getWindow();
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                pathCoeffs.setText(selectedFile.getAbsolutePath());
+            }
+        });
 
         RadioButton coeffsBtnText = new RadioButton("Type:");
         coeffsBtnText.setToggleGroup(coeffsToggleGroup);
@@ -171,7 +198,7 @@ public class FIRFilter extends PspAlgorithm {
         CoeffsFileBox.setSpacing(5);
         CoeffsFileBox.getChildren().addAll(CoeffsBtnFile, pathCoeffs, fileChooserCoeffs);
 
-        signalRXVBox.getChildren().addAll(titleCoeffsBox, coeffsBtnText, fieldCoeffs, CoeffsFileBox);
+        coeffsBox.getChildren().addAll(titleCoeffsBox, coeffsBtnText, fieldCoeffs, CoeffsFileBox);
 
         // SAVE
         HBox generateHBox = new HBox();
@@ -209,7 +236,7 @@ public class FIRFilter extends PspAlgorithm {
         generateHBox.getChildren().add(generateButton);
         generateHBox.setAlignment(Pos.CENTER);
 
-        vbox.getChildren().addAll(orderVBox, signalRXVBox, signalQXBox, coeffsVBox, generateHBox);
+        vbox.getChildren().addAll(orderVBox, signalRXBox, signalQXBox, coeffsBox, generateHBox);
 
         return vbox;
     }

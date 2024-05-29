@@ -2,11 +2,22 @@ package utils_pack;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PSPUtils {
+
+    public static void createHexFile(String program, String absolutePath) {
+        try (FileWriter writer = new FileWriter(absolutePath + "\\program.txt", false)) {
+            writer.write(program);
+            writer.flush();
+        }
+        catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
 
     public static String[] readFile(String absolutePath) {
         List<String> list = new ArrayList<>();

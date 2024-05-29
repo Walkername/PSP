@@ -18,9 +18,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import utils_pack.PSPUtils;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -50,19 +50,8 @@ public class Controller {
     @FXML
     private void generate(ActionEvent event) {
         String programText = "";
-        createHexFile(programText, absolutePath.getText());
+        PSPUtils.createHexFile(programText, absolutePath.getText());
         System.out.println("You generated!");
-    }
-
-    @FXML
-    private void createHexFile(String program, String absolutePath) {
-        try (FileWriter writer = new FileWriter(absolutePath + "\\program.txt", false)) {
-            writer.write(program);
-            writer.flush();
-        }
-        catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
     }
 
     @FXML
@@ -169,12 +158,13 @@ public class Controller {
         TextField textField = absolutePath;
         Button locButton = locationChooser;
         locButton.setOnAction(this::chooseLocation);
+        hBox.getChildren().addAll(textField, locButton);
         Button generateButton = new Button();
         generateButton.setText("Generate");
         generateButton.setOnAction(this::generate);
 
         vbox1.getChildren().addAll(algorithmList, button);
-        vbox2.getChildren().addAll(scrollPane, generateButton);
+        vbox2.getChildren().addAll(scrollPane, hBox, generateButton);
     }
 
     @FXML
@@ -208,7 +198,6 @@ public class Controller {
                     Text algNumber = (Text) hbox.getChildren().getFirst();
                     algNumber.setText(String.valueOf(i));
                 }
-
 
                 algorithmContent.getChildren().remove(panelAlgorithm);
                 algorithmQueue.remove(newAlgorithm);
