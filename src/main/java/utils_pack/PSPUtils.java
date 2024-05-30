@@ -9,6 +9,37 @@ import java.util.List;
 
 public class PSPUtils {
 
+    public static String generateMOD(String indexRegister, String writeData, String sourcesRegisters) {
+        String codeOperation = "00100010";
+        String reserve = "00000000000";
+        String repeatRegister = "00001";
+        return codeOperation + indexRegister + writeData + repeatRegister + sourcesRegisters + reserve;
+    }
+
+    public static String generateFFT(String indexRegister, String writeData, String sourcesRegisters) {
+        String codeOperation = "00100001";
+        String reserve = "00000000000";
+        String repeatRegister = "00100";
+        return codeOperation + indexRegister + writeData + repeatRegister + sourcesRegisters + reserve;
+    }
+
+    public static String generateLDI(String indexRegister, String direction, String data) {
+        String codeOperation = "00000001";
+        String reserve = "000000";
+        return codeOperation + indexRegister + direction + data + reserve;
+    }
+
+    public static String generateSTI(String indexRegister, String constant) {
+        String codeOperation = "00000010";
+        return codeOperation + indexRegister + constant;
+    }
+
+    public static String generateFIR(String indexRegister, String writeData, String repeatRegister, String sourceRegisters) {
+        String codeOperation = "00100000";
+        String reserve = "00000000000";
+        return codeOperation + indexRegister + writeData + repeatRegister + sourceRegisters + reserve;
+    }
+
     public static void createHexFile(String program, String absolutePath) {
         try (FileWriter writer = new FileWriter(absolutePath + "\\program.txt", false)) {
             writer.write(program);

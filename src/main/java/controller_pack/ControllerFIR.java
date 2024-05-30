@@ -53,7 +53,7 @@ public class ControllerFIR {
 
         // READ
         String ram0Addr = PSPUtils.convertToBinary(firArrayRXaddr.getText(), 11);
-        String ram1Addr = PSPUtils.convertToBinary(firArrayRXaddr.getText(), 11);
+        String ram1Addr = PSPUtils.convertToBinary(firArrayQXaddr.getText(), 11);
         String ram2Addr = PSPUtils.convertToBinary(firArrayBaddr.getText(), 11);
         String irp0 = generateLDI("00000", "01", ram0Addr);
         String irp2 = generateLDI("00010", "01", ram2Addr);

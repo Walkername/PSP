@@ -22,12 +22,14 @@ import utils_pack.PSPUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Controller {
 
-    private Queue<PspAlgorithm> algorithmQueue = new LinkedList<>();
+    private final Queue<PspAlgorithm> algorithmQueue = new LinkedList<>();
 
     @FXML
     private ToggleButton modeChooser;
@@ -49,10 +51,204 @@ public class Controller {
 
     @FXML
     private void generate(ActionEvent event) {
-        String programText = "";
+        String programText = generateCode();
         PSPUtils.createHexFile(programText, absolutePath.getText());
         System.out.println("You generated!");
     }
+
+    private String generateCode() {
+        List<String> instructions = new ArrayList<>();
+        int writeAddress = 0;
+        int readAddress = 0;
+        PspAlgorithm firstAlgorithm = algorithmQueue.peek();
+        for (PspAlgorithm algorithm : algorithmQueue) {
+
+            // Addresses
+            String wAddr = PSPUtils.convertToBinary(String.valueOf(writeAddress), 11);
+            String rAddr = PSPUtils.convertToBinary(String.valueOf(readAddress), 11);
+
+            // WRITE LDI INSTRUCTIONS RAM2
+            String iwc0LDI = PSPUtils.generateLDI("01001", "01", wAddr);
+            // READ LDI INSTRUCTIONS RAM2
+            String irp2LDI = PSPUtils.generateLDI("00010", "01", rAddr);
+
+            instructions.add(iwc0LDI);
+            instructions.add(irp2LDI);
+
+            // WRITE LDI INSTRUCTIONS RAM0, RAM1
+            String iwp0LDI = PSPUtils.generateLDI("00110", "01", wAddr);
+            String iwp1LDI = PSPUtils.generateLDI("00111", "01", wAddr);
+
+            // READ LDI INSTRUCTIONS RAM0, RAM1
+            String irp0LDI = PSPUtils.generateLDI("00000", "01", rAddr);
+            String irp1LDI = PSPUtils.generateLDI("00001", "01", rAddr);
+
+            instructions.add(iwp0LDI);
+            instructions.add(iwp1LDI);
+            instructions.add(irp0LDI);
+            instructions.add(irp1LDI);
+
+            switch (algorithm.getName()) {
+
+                case "FIR-filter" -> {
+                    FIRFilter firFilter = (FIRFilter) algorithm;
+
+                    String firOrder = firFilter.getOrder();
+                    String[] signalRXarray = firFilter.getSignalRXArray();
+                    String[] signalQXarray = firFilter.getSignalQXArray();
+                    String[] coeffsArray = firFilter.getCoeffsArray();
+
+                    // STI INSTRUCTIONS RAM2
+                    for (String value : coeffsArray) {
+                        String data = PSPUtils.convertToHex(value, 32, 31);
+                        String cutData = data.substring(0, 20);
+                        String iwc0STI = PSPUtils.generateSTI("1001", cutData);
+                        instructions.add(iwc0STI);
+                    }
+
+                    if (algorithm.equals(firstAlgorithm)) {
+                        // STI INSTRUCTIONS RAM0
+                        for (String value : signalRXarray) {
+                            String data = PSPUtils.convertToHex(value, 32, 31);
+                            String cutData = data.substring(0, 20);
+                            String iwp0STI = PSPUtils.generateSTI("0110", cutData);
+                            instructions.add(iwp0STI);
+                        }
+
+                        // STI INSTRUCTIONS RAM1
+                        for (String value : signalQXarray) {
+                            String data = PSPUtils.convertToHex(value, 32, 31);
+                            String cutData = data.substring(0, 20);
+                            String iwp1STI = PSPUtils.generateSTI("0111", cutData);
+                            instructions.add(iwp1STI);
+                        }
+                    }
+
+                    // FIR INSTRUCTIONS
+                    int intOrder = Integer.parseInt(firOrder);
+                    for (int i = 1; i <= intOrder; i++) {
+                        String irp0LDIFIR = PSPUtils.generateLDI("00000", "01", rAddr);
+                        String irp1LDIFIR = PSPUtils.generateLDI("00001", "01", rAddr);
+                        String rModAddr = PSPUtils.convertToBinary(String.valueOf(Integer.parseInt(rAddr) + i - 1), 11);
+                        String irp2LDIFIR = PSPUtils.generateLDI("00010", "10", rModAddr);
+
+                        String binOrder = PSPUtils.convertToBinary(String.valueOf(i), 5);
+                        String instructionFIR = PSPUtils.generateFIR("1000", "1", binOrder, "100");
+
+                        instructions.add(irp0LDIFIR);
+                        instructions.add(irp1LDIFIR);
+                        instructions.add(irp2LDIFIR);
+                        instructions.add(instructionFIR);
+                    }
+
+                    for (int i = intOrder - 1; i >= 1; i--) {
+                        String rModAddrRam01 = PSPUtils.convertToBinary(String.valueOf(readAddress + intOrder - 1), 11);
+                        String rModAddrRam2 = PSPUtils.convertToBinary(String.valueOf(readAddress + intOrder - i), 11);
+                        String irp0LDIFIR = PSPUtils.generateLDI("00000", "10", rModAddrRam01);
+                        String irp1LDIFIR = PSPUtils.generateLDI("00001", "10", rModAddrRam01);
+                        String irp2LDIFIR = PSPUtils.generateLDI("00010", "01", rModAddrRam2);
+
+                        String binOrder = PSPUtils.convertToBinary(String.valueOf(i), 5);
+                        String instructionFIR = PSPUtils.generateFIR("1000", "1", binOrder, "100");
+
+                        instructions.add(irp0LDIFIR);
+                        instructions.add(irp1LDIFIR);
+                        instructions.add(irp2LDIFIR);
+                        instructions.add(instructionFIR);
+                    }
+
+                    readAddress += signalRXarray.length;
+                    writeAddress += signalRXarray.length;
+                }
+
+                case "FFT" -> {
+                    FFT fft = (FFT) algorithm;
+
+                    String[] signalRXarray = fft.getSignalRXArray();
+                    String[] signalQXarray = fft.getSignalQXArray();
+                    String[] coeffsArray = fft.getCoeffsArray();
+
+                    // WRITE TO RAM2
+                    for (String value : coeffsArray) {
+                        String data = PSPUtils.convertToHex(value, 32, 31);
+                        String cutData = data.substring(0, 20);
+                        String instructionSTI = PSPUtils.generateSTI("1001", cutData);
+                        instructions.add(instructionSTI);
+                    }
+
+                    if (algorithm.equals(firstAlgorithm)) {
+                        // WRITE TO RAM0
+                        for (String value : signalRXarray) {
+                            String data = PSPUtils.convertToHex(value, 32, 31);
+                            String cutData = data.substring(0, 20);
+                            String instructionSTI = PSPUtils.generateSTI("0110", cutData);
+                            instructions.add(instructionSTI);
+                        }
+
+                        // WRITE TO RAM1
+                        for (String value : signalQXarray) {
+                            String data = PSPUtils.convertToHex(value, 32, 31);
+                            String cutData = data.substring(0, 20);
+                            String instructionSTI = PSPUtils.generateSTI("0111", cutData);
+                            instructions.add(instructionSTI);
+                        }
+                    }
+
+                    // FFT
+                    for (int i = 0; i < signalRXarray.length; i++) {
+                        String instructionFFT = PSPUtils.generateFFT("1000", "1", "100");
+                        instructions.add(instructionFFT);
+                    }
+
+                    readAddress += signalRXarray.length;
+                    writeAddress += signalRXarray.length;
+                }
+                case "Modulus" -> {
+                    Modulus modulus = (Modulus) algorithm;
+
+                    String[] signalRXarray = modulus.getSignalRXArray();
+                    String[] signalQXarray = modulus.getSignalQXArray();
+
+                    if (algorithm.equals(firstAlgorithm)) {
+                        // WRITE TO RAM0
+                        for (String value : signalRXarray) {
+                            String data = PSPUtils.convertToHex(value, 32, 31);
+                            String cutData = data.substring(0, 20);
+                            String instructionSTI = PSPUtils.generateSTI("0110", cutData);
+                            instructions.add(instructionSTI);
+                        }
+
+                        // WRITE TO RAM1
+                        for (String value : signalQXarray) {
+                            String data = PSPUtils.convertToHex(value, 32, 31);
+                            String cutData = data.substring(0, 20);
+                            String instructionSTI = PSPUtils.generateSTI("0111", cutData);
+                            instructions.add(instructionSTI);
+                        }
+                    }
+
+                    for (int i = 0; i < signalRXarray.length; i++) {
+                        String instructionMOD = PSPUtils.generateMOD("1001", "1", "011");
+                        instructions.add(instructionMOD);
+                    }
+
+                    readAddress += signalRXarray.length;
+                    writeAddress += signalRXarray.length;
+                }
+            }
+        }
+
+        StringBuilder programText = new StringBuilder();
+
+        for (String instruction : instructions) {
+            programText.append(instruction);
+            programText.append("\n");
+        }
+
+        return programText.toString();
+    }
+
+
 
     @FXML
     private void chooseLocation(ActionEvent event) {
@@ -201,6 +397,11 @@ public class Controller {
 
                 algorithmContent.getChildren().remove(panelAlgorithm);
                 algorithmQueue.remove(newAlgorithm);
+
+                PspAlgorithm firstAlg = algorithmQueue.peek();
+                for (PspAlgorithm alg : algorithmQueue) {
+                    alg.setState(alg != firstAlg);
+                }
             });
 
             HBox.setHgrow(algorithmNumber, Priority.ALWAYS);
@@ -208,6 +409,8 @@ public class Controller {
             HBox.setHgrow(newAlgorithm.getImageBlock(), Priority.ALWAYS);
             HBox.setHgrow(deleteButton, Priority.ALWAYS);
             panelAlgorithm.getChildren().addAll(algorithmNumber, settingButton, newAlgorithm.getImageBlock(), deleteButton);
+
+            newAlgorithm.setState(algorithmQueue.size() != 0);
 
             algorithmQueue.add(newAlgorithm);
             algorithmContent.getChildren().add(panelAlgorithm);

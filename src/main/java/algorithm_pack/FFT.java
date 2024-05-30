@@ -45,6 +45,8 @@ public class FFT extends PspAlgorithm {
         return coeffsArray;
     }
 
+
+
     private Parent generateInterface() {
         VBox vbox = new VBox();
         vbox.setSpacing(10);
@@ -192,7 +194,7 @@ public class FFT extends PspAlgorithm {
         coeffsBox.getChildren().addAll(titleCoeffsBox, coeffsBtnText, fieldCoeffs, CoeffsFileBox);
 
         // SAVE
-        HBox generateHBox = new HBox();
+        HBox saveHBox = new HBox();
         Button generateButton = new Button();
         generateButton.setText("Save");
         generateButton.setOnMouseClicked(event -> {
@@ -223,10 +225,12 @@ public class FFT extends PspAlgorithm {
 
             super.getStage().close();
         });
-        generateHBox.getChildren().add(generateButton);
-        generateHBox.setAlignment(Pos.CENTER);
+        saveHBox.getChildren().add(generateButton);
+        saveHBox.setAlignment(Pos.CENTER);
 
-        vbox.getChildren().addAll(signalRXBox, signalQXBox, coeffsBox, generateHBox);
+        super.getSignalBox().getChildren().addAll(signalRXBox, signalQXBox);
+
+        vbox.getChildren().addAll(super.getSignalBox(), coeffsBox, saveHBox);
 
         return vbox;
     }

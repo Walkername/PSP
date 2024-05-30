@@ -166,7 +166,9 @@ public class Modulus extends PspAlgorithm {
         generateHBox.getChildren().add(generateButton);
         generateHBox.setAlignment(Pos.CENTER);
 
-        vbox.getChildren().addAll(signalRXBox, signalQXBox, generateHBox);
+        super.getSignalBox().getChildren().addAll(signalRXBox, signalQXBox);
+
+        vbox.getChildren().addAll(super.getSignalBox(), generateHBox);
 
         return vbox;
     }

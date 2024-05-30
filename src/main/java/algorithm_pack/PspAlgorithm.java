@@ -12,6 +12,7 @@ public abstract class PspAlgorithm {
     private final VBox imageBlock;
 
     private Stage stage;
+    private final VBox signalBox = new VBox();
 
     public PspAlgorithm(String name) {
         this.name = name;
@@ -26,16 +27,8 @@ public abstract class PspAlgorithm {
         this.imageBlock.getChildren().add(textName);
     }
 
-    public String generateSTI(String data, int ram) {
-        String instruction = "00000010";
-        switch (ram) {
-            case 0 -> instruction += "0101";
-            case 1 -> instruction += "0110";
-            case 2 -> instruction += "1000";
-        }
-        String constant = data.substring(0, 21);
-        instruction += constant;
-        return instruction;
+    public void setState(boolean state) {
+        signalBox.setDisable(state);
     }
 
     public VBox getImageBlock() {
@@ -50,7 +43,12 @@ public abstract class PspAlgorithm {
         return this.stage;
     }
 
+    public VBox getSignalBox() {
+        return this.signalBox;
+    }
+
     public void setStage(Stage stage) {
         this.stage = stage;
     }
+
 }

@@ -37,7 +37,9 @@ public class FIRFilter extends PspAlgorithm {
         return signalRXArray;
     }
 
-    public String[] getSignalQXArray() { return signalQXArray; }
+    public String[] getSignalQXArray() {
+        return signalQXArray;
+    }
 
     public String[] getCoeffsArray() {
         return coeffsArray;
@@ -236,7 +238,9 @@ public class FIRFilter extends PspAlgorithm {
         generateHBox.getChildren().add(generateButton);
         generateHBox.setAlignment(Pos.CENTER);
 
-        vbox.getChildren().addAll(orderVBox, signalRXBox, signalQXBox, coeffsBox, generateHBox);
+        super.getSignalBox().getChildren().addAll(orderVBox, signalRXBox, signalQXBox);
+
+        vbox.getChildren().addAll(super.getSignalBox(), coeffsBox, generateHBox);
 
         return vbox;
     }
