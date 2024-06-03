@@ -14,13 +14,13 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <Group xmlns:fx="http://javafx.com/fxml" fx:controller="controller_pack.Controller">
-    <VBox spacing="20" style="-fx-padding: 10 10 10 10;" prefWidth="680" prefHeight="480">
-        <HBox style="-fx-border-color: black;" alignment="CENTER" >
+    <VBox spacing="5" style="-fx-padding: 10 10 10 10;" prefWidth="680" prefHeight="480">
+        <HBox style="-fx-padding: 5 5 5 5; -fx-background-color: #F2F3F2; -fx-border-color: #D2D5D2;" alignment="CENTER" >
             <ToggleButton fx:id="modeChooser" onAction="#changeMode" text="Change to Test mode" />
         </HBox>
 
-        <HBox fx:id="mainWindow" spacing="20">
-            <VBox spacing="10" style="-fx-border-color: black; -fx-padding: 10 10 10 10;">
+        <HBox fx:id="mainWindow" spacing="10" fillHeight="false">
+            <VBox spacing="10" prefHeight="330" prefWidth="115" style="-fx-padding: 10 10 10 10; -fx-background-color: #F2F3F2; -fx-border-color: #D2D5D2;">
                 <ComboBox fx:id="algorithmList" promptText="Select Filter Type" value="FIR-filter">
                     <items>
                         <FXCollections fx:factory="observableArrayList">
