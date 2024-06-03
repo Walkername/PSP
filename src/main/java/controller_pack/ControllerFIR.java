@@ -102,7 +102,7 @@ public class ControllerFIR {
         }
 
         for (int i = intOrder - 1; i >= 1; i--) {
-            String inModAddrRam0 = PSPUtils.convertToBinary(String.valueOf(Integer.parseInt(ram2Addr) + intOrder - 1), 11);
+            String inModAddrRam0 = PSPUtils.convertToBinary(String.valueOf(Integer.parseInt(ram0Addr) + intOrder - 1), 11);
             String inModAddrRam2 = PSPUtils.convertToBinary(String.valueOf(Integer.parseInt(ram2Addr) + intOrder - i), 11);
             String irp0LDI = generateLDI("00000", "10", inModAddrRam0);
             String irp2LDI = generateLDI("00010", "01", inModAddrRam2);
